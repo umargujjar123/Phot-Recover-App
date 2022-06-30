@@ -44,17 +44,20 @@ class ImageView : AppCompatActivity() {
                         .getAbsolutePath() + "/Recovered Images/")}"
                 )
                 Log.e("TAG", "onCreate: The path of the source file is ${File(it)}")
-
             }
         }
     }
 
+
     override fun onBackPressed() {
         super.onBackPressed()
-
         setResult(101, Intent().putExtra("Deleted_Index",2))
         finish()
     }
+
+
+
+
 
     @Throws(IOException::class)
     fun copyFile(sourceFile: File?, destFile: File) {

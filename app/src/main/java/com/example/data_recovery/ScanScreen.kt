@@ -1,5 +1,6 @@
 package com.example.data_recovery
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +17,7 @@ class ScanScreen: AppCompatActivity() {
 
     lateinit var directoryAdaptor: DirectoriesAdopter
     lateinit var imagesList: DirList
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -29,8 +31,9 @@ class ScanScreen: AppCompatActivity() {
 //        Log.e("TAG", "onCreate:  the list data is ${imagesList.toString()}", )
 
 //
-        directoryAdaptor = DirectoriesAdopter { directoryModel -> imageItemOnClick(directoryModel) }
-        val layoutManager: GridLayoutManager = GridLayoutManager(this@ScanScreen, 3)
+        directoryAdaptor = DirectoriesAdopter { directoryModel, Int -> imageItemOnClick(directoryModel) }
+        Log.e("TAG", "onCreate: The index coming is ${Int}", )
+        val layoutManager = GridLayoutManager(this@ScanScreen, 3)
         binding.directoryID2.layoutManager = layoutManager
         binding.directoryID2.adapter = directoryAdaptor
 
@@ -48,6 +51,8 @@ class ScanScreen: AppCompatActivity() {
         startActivityForResult(Intent(this, ImageView::class.java).putExtras(b),101)
     }
 
+    @Deprecated("Deprecated in Java")
+    @SuppressLint("NotifyDataSetChanged")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 

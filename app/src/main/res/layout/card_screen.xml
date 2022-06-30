@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:id="@+id/card1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:cardElevation="10dp"
+            app:cardCornerRadius="20dp"
+            android:layout_margin="10dp"
+            app:cardBackgroundColor="@color/white"
+            >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Images   "
+                    android:textSize="18sp"
+                    />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:id="@+id/image_counter"
+                    android:textSize="18sp"
+                    />
+
+            </LinearLayout>
+
+
+            <!--            <TextView-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:text="Videos    0"-->
+            <!--                android:layout_gravity="bottom|center_horizontal"-->
+            <!--                android:layout_marginTop="20dp"-->
+            <!--                android:layout_marginBottom="20dp"-->
+            <!--                android:textSize="20sp"-->
+            <!--                android:textStyle="bold"-->
+            <!--                />-->
+
+
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:id="@+id/card2"
+            app:layout_constraintTop_toBottomOf="@+id/card1"
+            app:cardElevation="10dp"
+            app:cardCornerRadius="20dp"
+            android:layout_margin="10dp"
+            app:cardBackgroundColor="@color/white"
+            >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Videos   "
+                    android:textSize="18sp"
+                    />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:id="@+id/video_counter"
+                    android:textSize="18sp"
+                    />
+
+            </LinearLayout>
+
+
+            <!--            <TextView-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:text="Videos    0"-->
+            <!--                android:layout_gravity="bottom|center_horizontal"-->
+            <!--                android:layout_marginTop="20dp"-->
+            <!--                android:layout_marginBottom="20dp"-->
+            <!--                android:textSize="20sp"-->
+            <!--                android:textStyle="bold"-->
+            <!--                />-->
+
+
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:id="@+id/card3"
+            app:layout_constraintTop_toBottomOf="@+id/card2"
+            app:cardElevation="10dp"
+            app:cardCornerRadius="20dp"
+            android:layout_margin="10dp"
+            app:cardBackgroundColor="@color/white"
+            >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Audios   "
+                    android:textSize="18sp"
+                    />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:id="@+id/audio_counter"
+                    android:textSize="18sp"
+                    />
+
+            </LinearLayout>
+
+
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Videos    0"-->
+<!--                android:layout_gravity="bottom|center_horizontal"-->
+<!--                android:layout_marginTop="20dp"-->
+<!--                android:layout_marginBottom="20dp"-->
+<!--                android:textSize="20sp"-->
+<!--                android:textStyle="bold"-->
+<!--                />-->
+
+
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/scan_btn"
+            android:layout_marginTop="20dp"
+            app:cardCornerRadius="5dp"
+            android:layout_width="350dp"
+            android:layout_height="50dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/card3"
+
+
+            app:cardBackgroundColor="#D50000">
+
+            <TextView
+                android:id="@+id/text2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Scan"
+                android:layout_gravity="center"
+                android:padding="5dp"
+                android:textSize="14sp"
+                android:textColor="@android:color/white" />
+        </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+            android:visibility="gone"
+            android:id="@+id/view_btn"
+            android:layout_marginTop="20dp"
+            app:cardCornerRadius="5dp"
+            android:layout_width="350dp"
+            android:layout_height="50dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/scan_btn"
+
+
+            app:cardBackgroundColor="#F20078D4">
+
+            <TextView
+                android:id="@+id/view_files_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="View Files"
+                android:layout_gravity="center"
+                android:padding="5dp"
+                android:textSize="14sp"
+                android:textColor="@android:color/white" />
+        </androidx.cardview.widget.CardView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/directory_ID"
+            app:layout_constraintTop_toBottomOf="@+id/view_btn"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:itemCount="10"
+            tools:listitem="@layout/directoriesfiles"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

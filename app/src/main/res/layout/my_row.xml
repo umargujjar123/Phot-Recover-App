@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="user"
+            type="com.example.data_recovery.model.UserModel" />
+    </data>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:id="@+id/row_ID">
+
+        <ImageView
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:id="@+id/image_ID"
+            android:src="@color/design_default_color_on_surface"
+
+            ></ImageView>
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:id="@+id/text_ID"
+            android:text="@{user.name}"
+            android:textColor="@color/black"
+            android:textSize="24sp"></TextView>
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:id="@+id/text_ID1"
+            android:text="@{user.name}"
+            android:textColor="@color/black"
+            android:textSize="24sp"></TextView>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</layout>

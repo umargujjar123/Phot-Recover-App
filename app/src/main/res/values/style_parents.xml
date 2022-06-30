@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) 2019 Veli Tasalı
+  ~
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+  -->
+
+<resources>
+    <!-- prototype start -->
+    <style name="Theme.Prototype.TrebleShot.Base" parent="Theme.MaterialComponents.Light">
+
+        <item name="stateSelectedImage">@drawable/state_selected_image</item>
+        <item name="stateSelectedImageRounded">@drawable/state_selected_image_rounded</item>
+        <item name="stateSelectedImageRoundedGuiding">@drawable/state_selected_image_rounded_guiding</item>
+        <item name="stateSelectedImageSquare">@drawable/state_selected_image_square</item>
+        <item name="statusBarColor">@android:color/transparent</item>
+        <item name="useLightStatusBar">true</item>
+
+        <!--styling framework-->
+
+    </style>
+
+    <style name="Theme.Prototype.TrebleShot.Dark.Base" parent="Theme.MaterialComponents">
+
+        <item name="stateSelectedImage">@drawable/state_selected_image_dark</item>
+        <item name="stateSelectedImageRounded">@drawable/state_selected_image_rounded_dark</item>
+        <item name="stateSelectedImageRoundedGuiding">@drawable/state_selected_image_rounded_guiding_dark</item>
+        <item name="stateSelectedImageSquare">@drawable/state_selected_image_square_dark</item>
+        <item name="statusBarColor">@android:color/transparent</item>
+        <item name="useLightStatusBar">false</item>
+
+        <!--styling framework-->
+    </style>
+    <!-- prototype end -->
+
+    <!-- generalization start -->
+
+
+    <!-- generalization end -->
+</resources>

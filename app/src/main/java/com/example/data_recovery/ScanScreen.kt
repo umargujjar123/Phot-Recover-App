@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.data_recovery.Constants.Common
 import com.example.data_recovery.adopters.DirectoriesAdopter
 import com.example.data_recovery.databinding.ScanScreenBinding
 import com.example.data_recovery.model.DirList
@@ -25,7 +26,7 @@ class ScanScreen: AppCompatActivity() {
 
         imagesList = intent.getSerializableExtra("dataList") as DirList
 
-        Log.e("TAG", "The data is ${imagesList}", )
+        Log.e("TAG", "The data is ${Common.imageslist}", )
 
 //        val imagesList: ArrayList<DirectoriesModel>? = data!!.getParcelable<Parcelable>("dataList") as ArrayList<DirectoriesModel>?
 //        Log.e("TAG", "onCreate:  the list data is ${imagesList.toString()}", )
@@ -37,7 +38,7 @@ class ScanScreen: AppCompatActivity() {
         binding.directoryID2.layoutManager = layoutManager
         binding.directoryID2.adapter = directoryAdaptor
 
-        directoryAdaptor.submitList(imagesList.directories)
+        directoryAdaptor.submitList(Common.imageslist)
         directoryAdaptor.notifyDataSetChanged()
 
 

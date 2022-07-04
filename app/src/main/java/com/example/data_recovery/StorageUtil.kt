@@ -48,16 +48,10 @@ object StorageUtil {
         // Final set of paths
         val availableDirectoriesSet: MutableList<String?> = arrayListOf()
         if (!TextUtils.isEmpty(EMULATED_STORAGE_TARGET)) {
-            // Device has an emulated storage
             availableDirectoriesSet.add(emulatedStorageTarget)
         } else {
-            // Device doesn't have an emulated storage
             availableDirectoriesSet.addAll(getExternalStorage(context))
         }
-
-//        // Add all secondary storages
-//        Collections.addAll(availableDirectoriesSet, *allSecondaryStorages)
-//        val storagesArray = arrayOfNulls<String>(availableDirectoriesSet.size)
         return availableDirectoriesSet
     }
 
@@ -82,15 +76,12 @@ object StorageUtil {
             if (TextUtils.isEmpty(EXTERNAL_STORAGE)) {
                 availableDirectoriesSet.addAll(availablePhysicalPaths)
             } else {
-                // Device has physical external storage; use plain paths.
                 availableDirectoriesSet.add(EXTERNAL_STORAGE)
             }
         }
         return availableDirectoriesSet
     }
 
-    // External storage paths should have storageId in the last segment
-    // i.e: "/storage/emulated/storageId" where storageId is 0, 1, 2, ...
     private val emulatedStorageTarget: String
         private get() {
             var rawStorageId = ""
@@ -111,10 +102,8 @@ object StorageUtil {
             }
         }
 
-    // All Secondary SD-CARDs split into array
     private val allSecondaryStorages: MutableList<String?>
         private get() = if (!TextUtils.isEmpty(SECONDARY_STORAGES)) {
-            // All Secondary SD-CARDs split into array
             SECONDARY_STORAGES.split(File.pathSeparator).toMutableList()
         } else arrayListOf()
 

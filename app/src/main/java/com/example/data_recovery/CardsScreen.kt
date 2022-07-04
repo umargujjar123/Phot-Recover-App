@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
+import com.example.data_recovery.Constants.Common
 import com.example.data_recovery.adopters.DirectoriesAdopter
 import com.example.data_recovery.databinding.CardScreenBinding
 import com.example.data_recovery.model.DirList
@@ -54,8 +55,14 @@ class CardsScreen : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = DataBindingUtil.setContentView(this, R.layout.card_screen)
         binding.viewBtn.setOnClickListener(){
+            var temp= arrayListOf<DirectoriesModel>()
+            imagesNameList.forEach {
+                temp.add(it)
+            }
+            Common.imageslist=temp
             val b = Bundle().apply {
                 putSerializable("dataList", DirList(directories = imagesNameList))
             }
@@ -65,18 +72,14 @@ class CardsScreen : AppCompatActivity() {
 
         binding.scanBtn.setOnClickListener() {
             binding.scanBtn.visibility = View.GONE
-            Log.e(
-                "TAG",
-                "onCreate: the files path coming is ${getExternalStoragePublicDirectory(Environment.getExternalStorageState())} "
-            )
-
             imageCounter = 0
             videoCounter = 0
             audioCounter = 0
             genericCounter = 0
             if (job?.isActive == true) {
                 job?.cancel()
-            } else {
+            }
+            else {
                 if (!checkPermissionForReadExternalStorage()) {
                     requestPermissionForReadExtertalStorage()
                     requestSDCardPermissions()
@@ -112,49 +115,29 @@ class CardsScreen : AppCompatActivity() {
                     } else {
                         searchDir(fileList[i])
                     }
-                } else {
+                }
+                else {
                     genericCounter++
                     val images = fileList[i].name
-                    if (/*images.endsWith(img) || images.endsWith(".png") || images.endsWith(".jpeg") || images.endsWith(
-                            ".tiff"
-                        ) || images.endsWith(".psd") || images.endsWith(".raw") || images.endsWith(".eps") || images.endsWith(
-                            ".ai"
-                        ) || */isImage(fileList[i])
-                    ) {
-                        Log.e("TAG", "All_Dir: ${fileList[i].absolutePath}")
-                        imageCounter++
+                    if (isImage(fileList[i]))
+                    {
+                        Log.e("TAG", "searchDir: fileList[i].absolutePath", )
+                         imageCounter++
                         imagesNameList.add(
                             DirectoriesModel(
                                 name = fileList[i].name,
                                 image = fileList[i].absolutePath
                             )
                         )
-                    } /*else if (images.endsWith(".mp4") || images.endsWith(".mkv") || images.endsWith(
-                            ".mov"
-                        ) || images.endsWith(".wmv") || images.endsWith(".avchd") || images.endsWith(
-                            ".webm"
-                        ) || images.endsWith(".flv")
-                    ) {
-                        Log.e("TAG", "Search_Dir: ${fileList[i].absolutePath}")
-                        videoCounter++
-                        videoList.add(fileList[i].absolutePath)
-                    } else if (images.endsWith(".mp4") || images.endsWith(".mp3")) {
-                        Log.e("TAG", "Search_Dir: ${fileList[i].absolutePath}")
-                        audioCounter++
-                        audioList.add(fileList[i].absolutePath)
-                    }*/
-
-//                    Log.e("TAG", "Search_Dir: ${fileList[i].name}" )
-
-
+                    }
                     withContext(Dispatchers.Main) {
                         binding.imageCounter.text = imageCounter.toString()
-//                       delay(500)
                     }
 
                 }
             }
-        } else {
+        }
+        else {
             Log.e("TAG", "searchDir: File list is coming null")
         }
 
@@ -204,16 +187,6 @@ class CardsScreen : AppCompatActivity() {
                 binding.videoCounter.text = videoCounter.toString()
                 binding.audioCounter.text = audioCounter.toString()
                 binding.viewBtn.visibility = View.VISIBLE
-
-//
-//                directoryAdaptor = DirectoriesAdopter { user -> adopterOnClick(user) }
-//                val layoutManager: GridLayoutManager = GridLayoutManager(this@CardsScreen, 3)
-//                binding.directoryID.layoutManager = layoutManager
-//                binding.directoryID.adapter = directoryAdaptor
-//
-//                directoryAdaptor.submitList(imagesNameList)
-//                directoryAdaptor.notifyDataSetChanged()
-
             }
             Log.e("TAG", "Generic Counter is: $genericCounter")
         }

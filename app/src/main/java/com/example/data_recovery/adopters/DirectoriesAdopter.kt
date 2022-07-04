@@ -9,7 +9,10 @@ import com.bumptech.glide.Glide
 import com.example.data_recovery.databinding.DirectoriesfilesBinding
 import com.example.data_recovery.model.DirectoriesModel
 
-class DirectoriesAdopter(private val onClick: (DirectoriesModel, index: Int) -> Unit) :
+class DirectoriesAdopter(
+    private val onClick: (DirectoriesModel, index: Int) -> Unit,
+    private val onClickSelector: (DirectoriesModel, index: Int, isSelected: Boolean) -> Unit
+) :
     ListAdapter<DirectoriesModel, DirectoriesAdopter.UserViewHolder>(DirectoryDifferentUtil) {
 
     class UserViewHolder(
@@ -53,6 +56,8 @@ class DirectoriesAdopter(private val onClick: (DirectoriesModel, index: Int) -> 
                 !(holder.directoriesBinding.directory?.isSelected ?: false)
             holder.directoriesBinding.selection.isSelected =
                 holder.directoriesBinding.directory?.isSelected ?: false
+
+            onClickSelector(directory, position, holder.directoriesBinding.selection.isSelected)
         }
 
         holder.directoriesBinding.selection.isSelected =

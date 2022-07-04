@@ -163,7 +163,7 @@ class CardsScreen : AppCompatActivity() {
         try {
             ActivityCompat.requestPermissions(
                 this@CardsScreen, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                WRITE_STORAGE_PERMISSION_REQUEST_CODE
+                WRITE_STORAGE_PERMISSION_REQUEST_CODE,
             )
         } catch (e: Exception) {
             e.printStackTrace()

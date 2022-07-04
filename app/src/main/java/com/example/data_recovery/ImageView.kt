@@ -76,9 +76,8 @@ class ImageView : AppCompatActivity() {
 
 
             imageData1.image?.let {
-                copyFileOrDirectory(it, Environment.getExternalStorageDirectory()
-                    .getAbsolutePath() + "/MyFolder/${File(it).name}")
-
+                copyFile(File(it), File(Environment.getExternalStorageDirectory()
+                    .getAbsolutePath() + "/Recoverd Photos/${File(it).name}"))
 //                copyFile(
 //                    File(it), File(
 //                        Environment.getExternalStorageDirectory()
@@ -92,7 +91,7 @@ class ImageView : AppCompatActivity() {
                     "onCreate: The new folder created is ${
                         File(
                             Environment.getExternalStorageDirectory()
-                                .getAbsolutePath() + "/MyFolder/${File(it).name}"
+                                .getAbsolutePath() + "/Recovered Images/${File(it).name}"
                         )
                     }"
                 )
@@ -104,10 +103,16 @@ class ImageView : AppCompatActivity() {
 
     @Throws(IOException::class)
     fun copyFile(sourceFile: File?, destFile: File) {
+
         if (!destFile.parentFile.exists()) destFile.parentFile.mkdirs()
+//        Log.e("TAG", "copyFile: Directory created successfully ${destFile.parentFile?.mkdirs()}", )
         if (!destFile.exists()) {
+            Log.e("TAG", "copyFile: The path of the destination file is ${destFile.absolutePath} ", )
             destFile.createNewFile()
+            Log.e("TAG", "copyFile: New Created File is ${destFile.createNewFile()}", )
         }
+
+
         var source: FileChannel? = null
         var destination: FileChannel? = null
         try {
@@ -120,21 +125,6 @@ class ImageView : AppCompatActivity() {
             }
             if (destination != null) {
                 destination.close()
-            }
-        }
-    }
-
-    private fun deleteImage(path: String) {
-        val fDelete = File(path)
-        if (fDelete.exists()) {
-            if (fDelete.delete()) {
-                MediaScannerConnection.scanFile(
-                    this,
-                    arrayOf(Environment.getExternalStorageDirectory().toString()),
-                    null
-                ) { path, uri ->
-                    Log.d("debug", "DONE")
-                }
             }
         }
     }
@@ -200,24 +190,5 @@ class ImageView : AppCompatActivity() {
                 }
             }
         }
-    fun copyFileOrDirectory(srcDir: String?, dstDir: String?) {
-        try {
-            val src = File(srcDir)
-            val dst = File(dstDir, src.name)
-            if (src.isDirectory) {
-                val files = src.list()
-                val filesLength = files.size
-                for (i in 0 until filesLength) {
-                    val src1 = File(src, files[i]).path
-                    val dst1 = dst.path
-                    copyFileOrDirectory(src1, dst1)
-                }
-            } else {
-                copyFile(src, dst)
-            }
-        } catch (e: java.lang.Exception) {
-            e.printStackTrace()
-        }
-    }
 
 }

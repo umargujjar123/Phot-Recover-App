@@ -7,11 +7,12 @@ import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.os.Environment
 import android.os.Environment.getExternalStoragePublicDirectory
-import android.os.Parcelable
 import android.os.storage.StorageManager
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -19,12 +20,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.GridLayoutManager
 import com.example.data_recovery.adopters.DirectoriesAdopter
 import com.example.data_recovery.databinding.CardScreenBinding
 import com.example.data_recovery.model.DirList
 import com.example.data_recovery.model.DirectoriesModel
 import com.example.tessst.StorageUtil
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
 import java.io.File
 
@@ -106,7 +107,7 @@ class CardsScreen : AppCompatActivity() {
         if (fileList != null) {
             for (i in fileList.indices) {
                 if (fileList[i].isDirectory) {
-                    if (imageCounter > 100) {
+                    if (imageCounter > 2000) {
                         return
                     } else {
                         searchDir(fileList[i])
@@ -234,6 +235,30 @@ class CardsScreen : AppCompatActivity() {
         if (sdCard != null) {
             startActivityForResult(sdCard.createAccessIntent(null), REQ_SD_CARD_ACCESS)
         }
+        if (SDK_INT >= 30) {
+            if (!Environment.isExternalStorageManager()) {
+                Snackbar.make(
+                    findViewById(android.R.id.content),
+                    "Permission needed!",
+                    Snackbar.LENGTH_INDEFINITE
+                )
+                    .setAction("Settings") {
+                        try {
+                            val uri =
+                                Uri.parse("package:" + BuildConfig.APPLICATION_ID)
+                            val intent =
+                                Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri)
+                            startActivity(intent)
+                        } catch (ex: java.lang.Exception) {
+                            val intent = Intent()
+                            intent.action = Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
+                            startActivity(intent)
+                        }
+                    }
+                    .show()
+            }
+        }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

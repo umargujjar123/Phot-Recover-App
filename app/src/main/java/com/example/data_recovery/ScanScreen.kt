@@ -31,8 +31,8 @@ class ScanScreen: AppCompatActivity() {
 //        Log.e("TAG", "onCreate:  the list data is ${imagesList.toString()}", )
 
 //
-        directoryAdaptor = DirectoriesAdopter { directoryModel, Int -> imageItemOnClick(directoryModel) }
-        Log.e("TAG", "onCreate: The index coming is ${Int}", )
+        directoryAdaptor = DirectoriesAdopter { directoryModel, index -> imageItemOnClick(directoryModel, index) }
+
         val layoutManager = GridLayoutManager(this@ScanScreen, 3)
         binding.directoryID2.layoutManager = layoutManager
         binding.directoryID2.adapter = directoryAdaptor
@@ -43,25 +43,31 @@ class ScanScreen: AppCompatActivity() {
 
     }
 
-    private fun imageItemOnClick(directoriesModel: DirectoriesModel) {
-        Log.e("TAG", "imageItemOnClick: clicked image path is --> ${directoriesModel.image}", )
+    private fun imageItemOnClick(directoriesModel: DirectoriesModel, index:Int) {
+        Log.e("TAG", "imageItemOnClick: clicked image path is --> ${directoriesModel.image} and index is $index", )
         val b = Bundle().apply {
             putSerializable(DIRECTORY_MODEL_ARGS, directoriesModel)
         }
-        startActivityForResult(Intent(this, ImageView::class.java).putExtras(b),101)
+        startActivityForResult(Intent(this, ImageView::class.java).putExtras(b).putExtra("index",index),101)
     }
 
     @Deprecated("Deprecated in Java")
     @SuppressLint("NotifyDataSetChanged")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
+        Log.e("TAG", "onActivityResult: The value of the request code is${requestCode}", )
+        Log.e("TAG", "onActivityResult: The Value of the reult code is ${resultCode}", )
         if(requestCode == 101) {
             val deletedIndex:Int = data?.extras?.getInt("Deleted_Index")?:-1
+            Log.e("TAG", "onActivityResult: THe coming index is ${deletedIndex}", )
             if(deletedIndex > -1) {
-                imagesList.directories.drop(deletedIndex)
+                Log.e("TAG", "onActivityResult: The Value of the code is ${requestCode}", )
+                imagesList.directories.removeAt(deletedIndex)
+                Log.e("TAG", "onActivityResult: The latest image list is ${imagesList}", )
                 if(this@ScanScreen::directoryAdaptor.isInitialized) {
+                    directoryAdaptor.submitList(imagesList.directories)
                     directoryAdaptor.notifyDataSetChanged()
+//                    directoryAdaptor.notifyItemChanged(deletedIndex)
                 }
             }
         }

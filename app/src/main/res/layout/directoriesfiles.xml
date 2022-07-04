@@ -21,22 +21,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp">
+
             <androidx.cardview.widget.CardView
+                android:id="@+id/imagee"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 app:cardCornerRadius="10dp"
+                app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintDimensionRatio="1:1"
-                >
+                app:layout_constraintTop_toTopOf="parent">
+
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@{directory.image}"
                     android:fitsSystemWindows="true"
                     android:scaleType="fitXY"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -46,16 +47,13 @@
 
             </androidx.cardview.widget.CardView>
 
-<!--            <ImageView-->
-<!--                android:id="@+id/selection"-->
-<!--                style="@style/OverflowButton"-->
-<!--                android:padding="12dp"-->
-<!--                app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                app:layout_constraintEnd_toEndOf="parent"-->
-<!--                app:layout_constraintTop_toBottomOf="@id/image"-->
-<!--                app:srcCompat="?stateSelectedImageRoundedGuiding" />-->
-
-
+            <ImageView
+                android:id="@+id/selection"
+                style="@style/OverflowButton"
+                android:padding="12dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imagee"
+                app:srcCompat="?stateSelectedImageRoundedGuiding" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>

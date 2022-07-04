@@ -1,15 +1,13 @@
 package com.example.data_recovery.adopters
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.data_recovery.databinding.DirectoriesfilesBinding
-import com.example.data_recovery.databinding.MyRowBinding
 import com.example.data_recovery.model.DirectoriesModel
-import com.example.data_recovery.model.UserModel
 
 class DirectoriesAdopter(private val onClick: (DirectoriesModel, index: Int) -> Unit) :
     ListAdapter<DirectoriesModel, DirectoriesAdopter.UserViewHolder>(DirectoryDifferentUtil) {
@@ -42,12 +40,24 @@ class DirectoriesAdopter(private val onClick: (DirectoriesModel, index: Int) -> 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
         val directory = getItem(position)
         holder.directoriesBinding.directory = directory
-        holder.directoriesBinding.root.setOnClickListener {
+        Glide.with(holder.directoriesBinding.image.context).load(directory.image)
+            .into(holder.directoriesBinding.image)
+        holder.directoriesBinding.imagee.setOnClickListener {
             directory?.let {
                 onClick(it, position)
             }
         }
 
+        holder.directoriesBinding.selection.setOnClickListener {
+            holder.directoriesBinding.directory?.isSelected =
+                !(holder.directoriesBinding.directory?.isSelected ?: false)
+            holder.directoriesBinding.selection.isSelected =
+                holder.directoriesBinding.directory?.isSelected ?: false
+        }
+
+        holder.directoriesBinding.selection.isSelected =
+            holder.directoriesBinding.directory?.isSelected ?: false
+        holder.directoriesBinding.executePendingBindings()
     }
 
 

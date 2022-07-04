@@ -4,7 +4,8 @@ import java.io.Serializable
 
 data class DirectoriesModel(
     val name: String?,
-    val image: String?
+    val image: String?,
+    var isSelected: Boolean = false
 ):Serializable
 
-data class DirList(val directories: List<DirectoriesModel>):Serializable
+data class DirList(var directories: MutableList<DirectoriesModel>):Serializable

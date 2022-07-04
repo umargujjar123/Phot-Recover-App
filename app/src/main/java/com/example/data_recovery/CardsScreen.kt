@@ -161,13 +161,13 @@ class CardsScreen : AppCompatActivity() {
     }
 
 
-    private val READ_STORAGE_PERMISSION_REQUEST_CODE = 41
+    private val WRITE_STORAGE_PERMISSION_REQUEST_CODE = 41
     private fun checkPermissionForReadExternalStorage(): Boolean {
         Log.e("TAG", "READ_STORAGE_PERMISSION_REQUEST_CODE: This function is called")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Log.e("TAG", "READ_STORAGE_PERMISSION_REQUEST_CODE: It is if statement")
             val result: Int =
-                applicationContext.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                applicationContext.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             return result == PackageManager.PERMISSION_GRANTED
             Log.e("TAG", "checkPermissionForReadExtertalStorage: $result")
 
@@ -179,8 +179,8 @@ class CardsScreen : AppCompatActivity() {
     fun requestPermissionForReadExtertalStorage() {
         try {
             ActivityCompat.requestPermissions(
-                this@CardsScreen, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                READ_STORAGE_PERMISSION_REQUEST_CODE
+                this@CardsScreen, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                WRITE_STORAGE_PERMISSION_REQUEST_CODE
             )
         } catch (e: Exception) {
             e.printStackTrace()
@@ -287,7 +287,7 @@ class CardsScreen : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             when (requestCode) {
-                READ_STORAGE_PERMISSION_REQUEST_CODE -> {
+                WRITE_STORAGE_PERMISSION_REQUEST_CODE -> {
                     scanFunction()
                 }
                 REQ_PICK_DIRECTORY -> {

@@ -110,7 +110,7 @@ class CardsScreen : AppCompatActivity() {
         if (fileList != null) {
             for (i in fileList.indices) {
                 if (fileList[i].isDirectory) {
-                    if (imageCounter > 2000) {
+                    if (imageCounter > 500) {
                         return
                     } else {
                         searchDir(fileList[i])

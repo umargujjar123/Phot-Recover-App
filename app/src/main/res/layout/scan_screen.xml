@@ -21,6 +21,50 @@
             app:spanCount="3"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             />
+        <androidx.cardview.widget.CardView
+            android:id="@+id/delete_btn"
+            android:layout_marginTop="20dp"
+            android:layout_margin="20dp"
+            app:cardCornerRadius="10dp"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+
+
+            app:cardBackgroundColor="#D50000">
+
+            <TextView
+                android:id="@+id/delete_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Delete"
+                android:layout_gravity="center"
+                android:padding="5dp"
+                android:textSize="14sp"
+                android:textColor="@android:color/white" />
+        </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/recover_btn"
+            android:layout_marginTop="20dp"
+            android:layout_margin="20dp"
+            app:cardCornerRadius="10dp"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:cardBackgroundColor="#459133">
+
+            <TextView
+                android:id="@+id/recover_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Recover Imge"
+                android:layout_gravity="center"
+                android:padding="5dp"
+                android:textSize="14sp"
+                android:textColor="@android:color/white" />
+        </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

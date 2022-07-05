@@ -52,6 +52,7 @@ class DirectoriesAdopter(
         }
 
         holder.directoriesBinding.selection.setOnClickListener {
+
             holder.directoriesBinding.directory?.isSelected =
                 !(holder.directoriesBinding.directory?.isSelected ?: false)
             holder.directoriesBinding.selection.isSelected =

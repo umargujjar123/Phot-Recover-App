@@ -71,7 +71,7 @@ class ScanScreen : AppCompatActivity() {
                         val uriOfCurrentIndex: Uri? = getImageUri(imageToDeletePath)
                         if (uriOfCurrentIndex != null) {
                             uris.add(uriOfCurrentIndex)
-                            var intentSender = when {
+                            val intentSender = when {
                                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
                                     MediaStore.createDeleteRequest(contentResolver, uris).intentSender
                                 }
@@ -257,12 +257,11 @@ class ScanScreen : AppCompatActivity() {
             val checkFile = File(path)
             ///  Timber.e("checkDelete- $checkFile")
             if (checkFile.exists()) {
-                var id: Long = 0
+                var id: Long
                 val cr: ContentResolver = contentResolver!!
                 val selection = MediaStore.Images.Media.DATA
                 val selectionArgs = arrayOf<String>(checkFile.absolutePath)
                 val projection = arrayOf(MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA)
-                val sortOrder = MediaStore.Images.Media.TITLE + " ASC"
                 val cursor = cr.query(
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection,
                     "$selection=?", selectionArgs, null
@@ -300,6 +299,8 @@ class ScanScreen : AppCompatActivity() {
         return null
     }
 
+
+
     val intentSenderLauncher =
         registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
             if (it.resultCode == AppCompatActivity.RESULT_OK) {
@@ -308,5 +309,8 @@ class ScanScreen : AppCompatActivity() {
                 }
             }
         }
+
+
+
 
 }

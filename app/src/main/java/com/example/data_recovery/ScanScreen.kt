@@ -5,27 +5,31 @@ import android.app.RecoverableSecurityException
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Intent
+import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.provider.OpenableColumns
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.data_recovery.Constants.Common
 import com.example.data_recovery.adopters.DirectoriesAdopter
 import com.example.data_recovery.databinding.ScanScreenBinding
 import com.example.data_recovery.model.DirList
 import com.example.data_recovery.model.DirectoriesModel
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.IOException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import java.io.*
 import java.nio.channels.FileChannel
 
 class ScanScreen : AppCompatActivity() {
@@ -60,52 +64,71 @@ class ScanScreen : AppCompatActivity() {
                 })
 
         binding.deleteBtn.setOnClickListener() {
-            deletedImagesList.forEach { imageToDelete ->
-                imageToDelete.image?.let { imageToDeletePath ->
-                    Log.e(
-                        "TAG",
-                        "onCreate: The path of the file to be deleted is ${File(imageToDeletePath)}"
-                    )
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
-                        val uris = arrayListOf<Uri?>()
-                        val uriOfCurrentIndex: Uri? = getImageUri(imageToDeletePath)
-                        if (uriOfCurrentIndex != null) {
-                            uris.add(uriOfCurrentIndex)
-                            val intentSender = when {
-                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
-                                    MediaStore.createDeleteRequest(contentResolver, uris).intentSender
+            val uris = arrayListOf<Uri?>()
+
+            lifecycleScope.launch(Dispatchers.Main) {
+                lifecycleScope.async(Dispatchers.IO) {
+                    deletedImagesList.forEach { imageToDelete ->
+                        imageToDelete.image?.let { imageToDeletePath ->
+                            Log.e(
+                                "TAG",
+                                "onCreate: The path of the file to be deleted is ${
+                                    File(
+                                        imageToDeletePath
+                                    )
+                                }"
+                            )
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+
+                                val uriOfCurrentIndex: Uri? = getImageUri(imageToDeletePath)
+                                if (uriOfCurrentIndex != null) {
+                                    uris.add(uriOfCurrentIndex)
+
                                 }
-                                else -> null
+                            } else {
+                                File(imageToDeletePath).delete()
+                                // finish()
                             }
-                            intentSender?.let { sender ->
-                                intentSenderLauncher.launch(
-                                    IntentSenderRequest.Builder(sender).build()
-                                )
-                            }
-
                         }
-                    }else{
-                        File(imageToDeletePath).delete()
-                        finish()
                     }
+                }.await()
+                Log.i("TAG", "onCreate:66555  ${uris.size} ")
+                val intentSender = when {
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+                        MediaStore.createDeleteRequest(contentResolver, uris).intentSender
+                    }
+                    else -> null
+                }
+                intentSender?.let { sender ->
+                    intentSenderLauncher.launch(
+                        IntentSenderRequest.Builder(sender).build()
+                    )
+                }
 
-                    if (!File(imageToDeletePath).exists()) {
-                        imagesList.directories.removeAt(imagesList.directories.indexOf(imagesList.directories.find { currentImage -> currentImage.image == imageToDeletePath }))
-                        Log.e(
-                            "TAG",
-                            "onCreate: The list coming after the deletion procedure is ${imagesList}",
-                        )
-
-
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                    // finish()
+                    deletedImagesList.forEach { imageToDeletePath ->
+                        if (!File(imageToDeletePath.image ?: "").exists()) {
+                            imagesList.directories.removeAt(
+                                imagesList.directories.indexOf(
+                                    imagesList.directories.find { currentImage -> currentImage.image == imageToDeletePath.image })
+                            )
+                            Log.e(
+                                "TAG",
+                                "onCreate: The list coming after the deletion procedure is ${imagesList}",
+                            )
+                        }
+                    }
+                    deletedImagesList.clear()
+                    if (this@ScanScreen::directoryAdaptor.isInitialized) {
+                        directoryAdaptor.submitList(imagesList.directories)
+                        directoryAdaptor.notifyDataSetChanged()
                     }
                 }
+
             }
 
-            deletedImagesList.clear()
-            if (this@ScanScreen::directoryAdaptor.isInitialized) {
-                directoryAdaptor.submitList(imagesList.directories)
-                directoryAdaptor.notifyDataSetChanged()
-            }
+
         }
         binding.recoverBtn.setOnClickListener() {
             imagesList.directories.filter { it.isSelected }.forEach {
@@ -120,18 +143,74 @@ class ScanScreen : AppCompatActivity() {
                         "TAG",
                         "onCreate: The path of the file to be deleted is ${File(imageToRecoverPath)}"
                     )
-                    copyFile(
-                        File(imageToRecoverPath), File(
-                            Environment.getExternalStorageDirectory()
-                                .getAbsolutePath() + "/Recoverd Photos/${File(imageToRecoverPath).name}"
+                    var output = File(
+                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+                            .getAbsolutePath() + "/Recoverd Photos/${File(imageToRecoverPath).name}"
+                    )
+                    if (!output.parentFile.exists()) output.parentFile.mkdirs()
+//        Log.e("TAG", "copyFile: Directory created successfully ${destFile.parentFile?.mkdirs()}", )
+                    if (!output.exists()) {
+                        Log.e("TAG", "copyFile: The path of the destination file is ${output.absolutePath} ")
+                    //    output.createNewFile()
+                     //   Log.e("TAG", "copyFile: New Created File is ${output.createNewFile()}")
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+
+                        if (!output.exists()) {
+                            try {
+                                try {
+                                    val inputStream: InputStream = getContentResolver()?.openInputStream(
+                                                Uri.fromFile(File(imageToRecoverPath))
+                                            )!!
+                                    val outputStream = FileOutputStream(output)
+                                    var read = 0
+                                    val bufferSize = 1024
+                                    val buffers = ByteArray(bufferSize)
+                                    while (inputStream.read(buffers)
+                                            .also { read = it } != -1
+                                    ) {
+                                        outputStream.write(buffers, 0, read)
+                                    }
+                                    var uri = FileProvider.getUriForFile(
+                                        application,
+                                        application.packageName + ".provider",
+                                        output
+                                    );
+
+                                    inputStream.close()
+                                    outputStream.close()
+                                } catch (e: java.lang.Exception) {
+                                    Log.e("Exception", e.message!!)
+                                }
+                            } catch (ex: java.lang.Exception) {
+                                ex.printStackTrace()
+                            }
+                        }
+
+
+
+                    }
+                    else {
+                        copyFile(
+                            File(imageToRecoverPath), File(Environment.getExternalStorageDirectory()
+                                .getAbsolutePath() + "/Recoverd Photos/${File(imageToRecoverPath).name}")
                         )
 
-                    )
+                    }
+
 
                 }
             }
             deletedImagesList.clear()
-            Toast.makeText(this@ScanScreen, "Images recovered successfully", Toast.LENGTH_SHORT).show()
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+            Toast.makeText(this@ScanScreen, "Images recovered successfully to ${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+                .getAbsolutePath() + "/Recoverd Photos"}", Toast.LENGTH_SHORT)
+                .show()}
+            else{
+                Toast.makeText(this@ScanScreen, "Images recovered successfully to ${Environment.getExternalStorageDirectory()
+                    .getAbsolutePath() + "/Recoverd Photos/"}", Toast.LENGTH_SHORT)
+                    .show()
+            }
         }
 
         val layoutManager = GridLayoutManager(this@ScanScreen, 3)
@@ -250,6 +329,7 @@ class ScanScreen : AppCompatActivity() {
             }
         }
     }
+
     fun getImageUri(
         path: String
     ): Uri? {
@@ -300,17 +380,33 @@ class ScanScreen : AppCompatActivity() {
     }
 
 
-
     val intentSenderLauncher =
         registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
             if (it.resultCode == AppCompatActivity.RESULT_OK) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    finish()
+                    // finish()
+                    Log.i("TAG", "djhsfjhjhsdjh: ${imagesList.directories.size}")
+
+                    deletedImagesList.forEach { imageToDeletePath ->
+                        if (!File(imageToDeletePath.image ?: "").exists()) {
+                            imagesList.directories.removeAt(
+                                imagesList.directories.indexOf(
+                                    imagesList.directories.find { currentImage -> currentImage.image == imageToDeletePath.image })
+                            )
+                            Log.e(
+                                "TAG",
+                                "onCreate: The list coming after the deletion procedure is ${imagesList}",
+                            )
+                        }
+                    }
+                    deletedImagesList.clear()
+                    if (this@ScanScreen::directoryAdaptor.isInitialized) {
+                        directoryAdaptor.submitList(imagesList.directories)
+                        directoryAdaptor.notifyDataSetChanged()
+                    }
                 }
             }
         }
-
-
 
 
 }

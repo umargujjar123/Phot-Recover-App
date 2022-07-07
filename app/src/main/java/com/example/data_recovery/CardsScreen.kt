@@ -10,7 +10,6 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.os.Environment
-import android.os.Environment.getExternalStoragePublicDirectory
 import android.os.storage.StorageManager
 import android.provider.Settings
 import android.util.Log
@@ -21,12 +20,10 @@ import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.example.data_recovery.Constants.Common
-import com.example.data_recovery.adopters.DirectoriesAdopter
 import com.example.data_recovery.databinding.CardScreenBinding
 import com.example.data_recovery.model.DirList
 import com.example.data_recovery.model.DirectoriesModel
 import com.example.tessst.StorageUtil
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
 import java.io.File
 
@@ -37,20 +34,14 @@ class CardsScreen : AppCompatActivity() {
     lateinit var binding: CardScreenBinding
     var genericCounter = 0
     var imageCounter = 0
-    var videoCounter = 0
-    var audioCounter = 0
-    val imagesList = ArrayList<DirectoriesModel>()
-    val imagesNameList: MutableList<DirectoriesModel> = arrayListOf()
+    var imagesNameList: MutableList<DirectoriesModel> = arrayListOf()
 
-    val videoList = ArrayList<String>()
-    val audioList = ArrayList<String>()
-    lateinit var directoryAdaptor: DirectoriesAdopter
 
 
     var job: Job? = null
     private lateinit var storage: File
     private var storagePaths: List<String?> = arrayListOf()
-    var allMediaList: MutableList<File> = arrayListOf()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,13 +49,13 @@ class CardsScreen : AppCompatActivity() {
 
         binding = DataBindingUtil.setContentView(this, R.layout.card_screen)
         binding.viewBtn.setOnClickListener(){
-            var temp= arrayListOf<DirectoriesModel>()
+            val temp= arrayListOf<DirectoriesModel>()
             imagesNameList.forEach {
                 temp.add(it)
             }
             Common.imageslist=temp
             val b = Bundle().apply {
-                putSerializable("dataList", DirList(directories = imagesNameList))
+                putSerializable ("dataList", DirList(directories = imagesNameList))
             }
 
             startActivity(Intent(this, ScanScreen::class.java).putExtras(b))
@@ -73,8 +64,6 @@ class CardsScreen : AppCompatActivity() {
         binding.scanBtn.setOnClickListener() {
             binding.scanBtn.visibility = View.GONE
             imageCounter = 0
-            videoCounter = 0
-            audioCounter = 0
             genericCounter = 0
             if (job?.isActive == true) {
                 job?.cancel()
@@ -105,20 +94,18 @@ class CardsScreen : AppCompatActivity() {
 
     private suspend fun searchDir(dir: File) {
 
-        val img = ".jpg"
         val fileList = dir.listFiles()
         if (fileList != null) {
             for (i in fileList.indices) {
                 if (fileList[i].isDirectory) {
-                    if (imageCounter > 500) {
-                        return
-                    } else {
+//                    if (imageCounter > 100) {
+//                        return
+//                    } else {
                         searchDir(fileList[i])
-                    }
+//                    }
                 }
                 else {
                     genericCounter++
-                    val images = fileList[i].name
                     if (isImage(fileList[i]))
                     {
                         Log.e("TAG", "searchDir: fileList[i].absolutePath", )
@@ -147,12 +134,10 @@ class CardsScreen : AppCompatActivity() {
     private val WRITE_STORAGE_PERMISSION_REQUEST_CODE = 41
     private fun checkPermissionForReadExternalStorage(): Boolean {
         Log.e("TAG", "READ_STORAGE_PERMISSION_REQUEST_CODE: This function is called")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Log.e("TAG", "READ_STORAGE_PERMISSION_REQUEST_CODE: It is if statement")
+        if (SDK_INT >= Build.VERSION_CODES.M) {
             val result: Int =
                 applicationContext.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             return result == PackageManager.PERMISSION_GRANTED
-            Log.e("TAG", "checkPermissionForReadExtertalStorage: $result")
 
         }
         return false
@@ -184,8 +169,6 @@ class CardsScreen : AppCompatActivity() {
             }
             withContext(Dispatchers.Main) {
                 binding.imageCounter.text = imageCounter.toString()
-                binding.videoCounter.text = videoCounter.toString()
-                binding.audioCounter.text = audioCounter.toString()
                 binding.viewBtn.visibility = View.VISIBLE
             }
             Log.e("TAG", "Generic Counter is: $genericCounter")
@@ -195,10 +178,10 @@ class CardsScreen : AppCompatActivity() {
     private var REQ_PICK_DIRECTORY = 21
     private var REQ_SD_CARD_ACCESS = 22
 
-    var sdCardUri: Uri? = null
+    private var sdCardUri: Uri? = null
 
     private fun requestSDCardPermissions() {
-        if (Build.VERSION.SDK_INT < 24) {
+        if (SDK_INT < 24) {
             startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT_TREE), REQ_PICK_DIRECTORY)
             return
         }
@@ -210,12 +193,13 @@ class CardsScreen : AppCompatActivity() {
         }
         if (SDK_INT >= 30) {
             if (!Environment.isExternalStorageManager()) {
-                Snackbar.make(
-                    findViewById(android.R.id.content),
-                    "Permission needed!",
-                    Snackbar.LENGTH_INDEFINITE
-                )
-                    .setAction("Settings") {
+//                Snackbar.make(
+//                    findViewById(android.R.id.content),
+//                    "Permission needed!",
+//                    Snackbar.LENGTH_INDEFINITE
+////                )
+//                    .setAction("Settings")
+//                {
                         try {
                             val uri =
                                 Uri.parse("package:" + BuildConfig.APPLICATION_ID)
@@ -227,9 +211,10 @@ class CardsScreen : AppCompatActivity() {
                             intent.action = Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
                             startActivity(intent)
                         }
-                    }
-                    .show()
-            }
+
+//                    .show()
+//            }
+                        }
         }
 
     }
@@ -258,13 +243,13 @@ class CardsScreen : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             when (requestCode) {
                 WRITE_STORAGE_PERMISSION_REQUEST_CODE -> {
                     scanFunction()
                 }
                 REQ_PICK_DIRECTORY -> {
-                    (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                    (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                     scanFunction()
                 }
                 REQ_SD_CARD_ACCESS -> {
@@ -272,12 +257,9 @@ class CardsScreen : AppCompatActivity() {
                 }
             }
         } else {
+            binding.scanBtn.visibility= View.VISIBLE
             Log.e("value", "Permission Denied, You cannot use local drive .")
         }
-    }
-
-    fun adopterOnClick(directoriesModel: DirectoriesModel) {
-
     }
 
 

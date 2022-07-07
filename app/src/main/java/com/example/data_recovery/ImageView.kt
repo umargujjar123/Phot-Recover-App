@@ -15,14 +15,12 @@ import android.widget.Toast
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import com.example.data_recovery.ScanScreen.Companion.DIRECTORY_MODEL_ARGS
 import com.example.data_recovery.databinding.ImageViewBinding
 import com.example.data_recovery.model.DirectoriesModel
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.IOException
+import java.io.*
 import java.nio.channels.FileChannel
 
 
@@ -76,16 +74,66 @@ class ImageView : AppCompatActivity() {
 
 
             imageData1.image?.let {
-                copyFile(File(it), File(Environment.getExternalStorageDirectory()
-                    .getAbsolutePath() + "/Recoverd Photos/${File(it).name}"))
+                var output = File(
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+                        .getAbsolutePath() + "/Recoverd Photos/${File(it).name}"
+                )
+
+                    if (!output.parentFile.exists()) output.parentFile.mkdirs()
+//        Log.e("TAG", "copyFile: Directory created successfully ${destFile.parentFile?.mkdirs()}", )
+                    if (!output.exists()) {
+                        Log.e("TAG", "copyFile: The path of the destination file is ${output.absolutePath} ")
+                        //    output.createNewFile()
+                        //   Log.e("TAG", "copyFile: New Created File is ${output.createNewFile()}")
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+
+                        if (!output.exists()) {
+                            try {
+                                try {
+                                    val inputStream: InputStream = getContentResolver()?.openInputStream(
+                                        Uri.fromFile(File(it))
+                                    )!!
+                                    val outputStream = FileOutputStream(output)
+                                    var read = 0
+                                    val bufferSize = 1024
+                                    val buffers = ByteArray(bufferSize)
+                                    while (inputStream.read(buffers)
+                                            .also { read = it } != -1
+                                    ) {
+                                        outputStream.write(buffers, 0, read)
+                                    }
+                                    var uri = FileProvider.getUriForFile(
+                                        application,
+                                        application.packageName + ".provider",
+                                        output
+                                    );
+
+                                    inputStream.close()
+                                    outputStream.close()
+                                } catch (e: java.lang.Exception) {
+                                    Log.e("Exception", e.message!!)
+                                }
+                            } catch (ex: java.lang.Exception) {
+                                ex.printStackTrace()
+                            }
+                            Toast.makeText(this@ImageView, "Image Recovered to the Folder ${output}", Toast.LENGTH_SHORT).show()
+                        }
+
+                    }else{
+                    copyFile(File(it), File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Recoverd Photos/${File(it).name}"))
+                        Toast.makeText(this@ImageView, "Image Recovered to the ${File(Environment.getExternalStorageDirectory()
+                            .getAbsolutePath() + "/Recoverd Photos/${File(it).name}")}", Toast.LENGTH_SHORT)
+                            .show()
+                }
+
 //                copyFile(
 //                    File(it), File(
 //                        Environment.getExternalStorageDirectory()
 //                            .getAbsolutePath() + "/MyFolder/${File(it).name}"
 //                    )
 //                )
-                Toast.makeText(this@ImageView, "Image Recovered Successfully", Toast.LENGTH_SHORT)
-                    .show()
+
                 Log.e(
                     "TAG",
                     "onCreate: The new folder created is ${
